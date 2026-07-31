@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Menu, X, BarChart3, Settings, User, LogOut, Home, Zap, 
-  Sun, Moon, ChevronDown, Compass, MessageSquare
+  Sun, Moon, ChevronDown, Compass, MessageSquare, Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -38,6 +38,7 @@ const Navbar = () => {
 
   const authenticatedNavItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Home },
+    { path: '/visitor-analytics', label: 'Visitors', icon: Activity },
     { path: '/profile', label: 'Profile', icon: User },
     { path: '/settings', label: 'Settings', icon: Settings },
   ];
@@ -46,6 +47,7 @@ const Navbar = () => {
     { path: '/', label: 'Home', icon: Home },
     { path: '/about', label: 'About', icon: Compass },
     { path: '/contact', label: 'Contact', icon: MessageSquare },
+    { path: '/visitor-analytics', label: 'Visitors', icon: Activity },
   ];
 
   const navItems = user ? authenticatedNavItems : publicNavItems;

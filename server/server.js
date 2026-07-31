@@ -4,6 +4,12 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import authRoutes from './routes/authRoutes.js';
 import expenseRoutes from './routes/expenseRoutes.js';
+import visitorRoutes from './routes/visitorRoutes.js';
+import incomeRoutes from './routes/incomeRoutes.js';
+import goalRoutes from './routes/goalRoutes.js';
+import recurringExpenseRoutes from './routes/recurringExpenseRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 import connectDB from './config/db.js';
 
 dotenv.config();
@@ -21,6 +27,12 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/visitors', visitorRoutes);
+app.use('/api/incomes', incomeRoutes);
+app.use('/api/goals', goalRoutes);
+app.use('/api/recurring-expenses', recurringExpenseRoutes);
+app.use('/api/activity', activityRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 connectDB();
 

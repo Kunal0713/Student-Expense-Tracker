@@ -1,5 +1,6 @@
 import Expense from '../models/Expense.js';
 import { getDemoExpenses, addDemoExpense, updateDemoExpense, deleteDemoExpense } from '../utils/demoExpenses.js';
+import { logActivity } from '../utils/activityLogger.js';
 
 export const getExpenses = async (req, res) => {
   try {
@@ -59,6 +60,13 @@ export const createExpense = async (req, res) => {
       });
     }
 
+    await logActivity({
+      userId: req.user._id,
+      actionType: 'expense_created',
+      message: `Expense "${expense.title}" added`,
+      metadata: { expenseId: expense._id, amount: expense.amount, category: expense.category }
+    });
+
     res.status(201).json(expense);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -76,6 +84,14 @@ export const updateExpense = async (req, res) => {
     }
 
     if (!expense) return res.status(404).json({ message: 'Expense not found' });
+
+    await logActivity({
+      userId: req.user._id,
+      actionType: 'expense_updated',
+      message: `Expense "${expense.title}" updated`,
+      metadata: { expenseId: expense._id }
+    });
+
     res.json(expense);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -85,15 +101,29 @@ export const updateExpense = async (req, res) => {
 export const deleteExpense = async (req, res) => {
   try {
     let deleted = false;
+    let deletedExpenseId = req.params.id;
+    let deletedExpenseTitle = 'Expense';
     try {
       const expense = await Expense.findOneAndDelete({ _id: req.params.id, user: req.user._id }).maxTimeMS(2000);
       deleted = !!expense;
+      if (expense) {
+        deletedExpenseId = expense._id;
+        deletedExpenseTitle = expense.title;
+      }
     } catch (dbError) {
       // Use demo mode
       deleted = deleteDemoExpense(req.user._id, req.params.id);
     }
 
     if (!deleted) return res.status(404).json({ message: 'Expense not found' });
+
+    await logActivity({
+      userId: req.user._id,
+      actionType: 'expense_deleted',
+      message: `Expense "${deletedExpenseTitle}" deleted`,
+      metadata: { expenseId: deletedExpenseId }
+    });
+
     res.json({ message: 'Expense deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
